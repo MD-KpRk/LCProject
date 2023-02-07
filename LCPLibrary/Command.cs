@@ -38,14 +38,26 @@ namespace LCPLibrary
                 return null;
             if (commands.Length == 1 & !int.TryParse(commands[0], out com))
                 return null;
-            Debug.WriteLine("Decrypter: Command = " + com + ". args count = " + commands.Length);
+
+            string[] args = commands[1..commands.Length];
+
+            Debug.WriteLine("Decrypter: Command = " + com + ". args count = " + args.Length+ " | "+ ArgsToString(args));
 
             if (commands.Length > 1)
-            {
-                return new Command(com, commands[1..commands.Length]);
-            }
+                return new Command(com, args);
+
             else return new Command(com);
 
+        }
+
+        static string ArgsToString(string[] args)
+        {
+            StringBuilder str = new StringBuilder();
+            for(int i=0;i< args.Length;i++)
+            {
+                str.Append(args[i] + " ");
+            }
+            return str.ToString();
         }
     }
 }

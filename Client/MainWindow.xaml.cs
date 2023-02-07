@@ -42,39 +42,36 @@ namespace Client
             {
                 var result = await receiver.ReceiveAsync();
                 var message = Encoding.UTF8.GetString(result.Buffer);
+                Debug.WriteLine("recieved new message: " + message);
                 Command? com = Command.Decrypt(message);
-                if (com != null)
-                {
-                    Debug.WriteLine(com.Encrypt());
-                    RunCommand(com.com, com.args);
-                }
-                else Debug.WriteLine("Null Command");
-
+                RunCommand(com);
             }
         }
 
-        void RunCommand(int com, string[]? args = null)
+        void RunCommand(Command? com)
         {
+            if (com == null)
+            {
+                Debug.WriteLine("Null Command");
+                return;
+            }
+
             using UdpClient udpClient = new UdpClient();
-            switch (com)
+            Debug.WriteLine("Executing command " + (int)CommandList.Ping);
+            switch (com.com)
             {
                 case (int)CommandList.Ping:
-                    Debug.WriteLine("Executing command " + (int)CommandList.Ping);
-                    string remoteIP;
-                    int remotePort = 0;
-                    try
-                    {
-                        remoteIP = args[0];
-                        remotePort = Convert.ToInt32(args[1]);
-                    }
-                    catch
+                    if(com.args == null || com.args.Length < 2)
                     {
                         Debug.WriteLine("Command syntax error");
                         return;
                     }
+                    string remoteIP = com.args[0];
+                    int remotePort = Convert.ToInt32(com.args[1]);
                     Command command = new Command((int)CommandList.Pong);
-                    string str = command.Encrypt();
-                    var data = Encoding.UTF8.GetBytes(str);
+                    string message = command.Encrypt();
+                    Debug.WriteLine("Sended message: " + message);
+                    var data = Encoding.UTF8.GetBytes(message);
                     udpClient.Send(data, data.Length, remoteIP, remotePort);
                     break;
 
