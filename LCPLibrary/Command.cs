@@ -9,55 +9,44 @@ namespace LCPLibrary
 {
     public class Command
     {
-        public int com;
+        int comNumber;
         public string[]? args;
+
+        public int ComNumber
+        {
+            get { return comNumber; }
+        }
 
         public Command(int commandNumber, string[]? args = null)
         {
-            com = commandNumber;
+            comNumber = commandNumber;
             if (args == null) this.args = null;
             else this.args = args;
         }
 
         public string Encrypt()
         {
-            StringBuilder str = new StringBuilder();
-
-            str.Append(this.com + ";");
-            if (args == null) return str.ToString();
-            for (int i = 0; i < args.Length; i++)
-                str.Append(args[i] + ";");
-            return str.ToString();
+            string command = comNumber + ";";
+            if (args == null) return command;
+            return command + string.Join(";", args);
         }
 
         public static Command? Decrypt(string str)
         {
-            int com;
+            int Number;
             string[] commands = str.Split(';', StringSplitOptions.RemoveEmptyEntries);
             if (commands == null || commands.Length == 0)
                 return null;
-            if (commands.Length == 1 & !int.TryParse(commands[0], out com))
+            if (commands.Length == 1 & !int.TryParse(commands[0], out Number))
                 return null;
 
             string[] args = commands[1..commands.Length];
+            Debug.WriteLine("Decrypter: Command = " + Number + ". args count = " + args.Length+ " | "+ string.Join(" ",args));
 
-            Debug.WriteLine("Decrypter: Command = " + com + ". args count = " + args.Length+ " | "+ ArgsToString(args));
+            if (args.Length > 0)
+                return new Command(Number, args);
+            return new Command(Number);
 
-            if (commands.Length > 1)
-                return new Command(com, args);
-
-            else return new Command(com);
-
-        }
-
-        static string ArgsToString(string[] args)
-        {
-            StringBuilder str = new StringBuilder();
-            for(int i=0;i< args.Length;i++)
-            {
-                str.Append(args[i] + " ");
-            }
-            return str.ToString();
         }
     }
 }

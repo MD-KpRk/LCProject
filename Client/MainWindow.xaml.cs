@@ -57,8 +57,8 @@ namespace Client
             }
 
             using UdpClient udpClient = new UdpClient();
-            Debug.WriteLine("Executing command " + (int)CommandList.Ping);
-            switch (com.com)
+            Debug.WriteLine("Executing command " + com.ComNumber);
+            switch (com.ComNumber)
             {
                 case (int)CommandList.Ping:
                     if(com.args == null || com.args.Length < 2)
